@@ -1,5 +1,5 @@
 node_modules/
 dist/
-build/
+# build/ — committed; React production bundle required by electron-builder
 .env
 *.log
