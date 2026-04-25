@@ -1,0 +1,89 @@
+# Opero Desktop — builds Windows (.exe) and macOS (.dmg) on every push to main/master
+name: Build Opero Desktop App
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            script: dist
+            platform-label: Windows
+          - os: macos-13
+            script: dist:mac
+            platform-label: macOS
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      # 1 — Check out this desktop repo into the root working directory
+      - name: Checkout desktop app
+        uses: actions/checkout@v4
+
+      # 2 — Check out the frontend repo into ./frontend
+      - name: Checkout frontend
+        uses: actions/checkout@v4
+        with:
+          repository: Mjawadi2002/Frontend-Opero
+          token: ${{ secrets.GH_TOKEN }}
+          path: frontend
+
+      # 3 — Node 20 for both build steps
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 4 — Install frontend deps and produce build/
+      - name: Install and build frontend
+        working-directory: frontend
+        run: npm install && npm run build
+
+      # 5 — Copy React build/ into desktop app build/
+      - name: Copy frontend build into desktop
+        shell: bash
+        run: |
+          mkdir -p build
+          cp -r frontend/build/. build/
+
+      # 6 — Install Electron / electron-builder deps
+      - name: Install desktop dependencies
+        run: npm ci
+
+      # 7 — Build the native installer (Windows: NSIS .exe  |  macOS: .dmg)
+      - name: Build ${{ matrix.platform-label }} app
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npm run ${{ matrix.script }} -- --publish never
+
+      # 8 — Create the GitHub Release (if missing) then upload the artifacts
+      - name: Upload to GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="v${VERSION}"
+
+          # Create the release if it does not already exist
+          if ! gh release view "$TAG" 2>/dev/null; then
+            gh release create "$TAG" \
+              --title "Opero Desktop v${VERSION}" \
+              --notes "Opero Desktop v${VERSION} — Windows (.exe) and macOS (.dmg) installers."
+          fi
+
+          # Upload every installer produced by electron-builder
+          find dist -maxdepth 1 \( -name "*.exe" -o -name "*.dmg" \) | while read f; do
+            echo "Uploading $f"
+            gh release upload "$TAG" "$f" --clobber
+          done
