@@ -18,11 +18,13 @@
     "dist:all": "electron-builder --win --mac --linux"
   },
   "build": {
-    "appId": "com.opero.desktop",
-    "productName": "Opero",
-    "copyright": "Copyright © 2026 Opero",
+    "appId": "com.teamyy.desktop",
+    "productName": "Teamyy",
+    "copyright": "Copyright © 2026 Teamyy",
     "asar": true,
-    "asarUnpack": ["build/**/*"],
+    "asarUnpack": [
+      "build/**/*"
+    ],
     "directories": {
       "output": "dist",
       "buildResources": "assets"
@@ -38,13 +40,24 @@
     ],
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] },
-        { "target": "portable", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "icon": "assets/icon.png",
       "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
+      "artifactName": "${productName}.Setup.${version}.${ext}",
       "oneClick": false,
       "perMachine": false,
       "allowElevation": true,
@@ -52,15 +65,19 @@
       "deleteAppDataOnUninstall": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Opero"
+      "shortcutName": "Teamyy"
     },
     "mac": {
-      "target": ["dmg"],
+      "target": [
+        "dmg"
+      ],
       "icon": "assets/icon.png",
       "category": "public.app-category.productivity"
     },
     "linux": {
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "icon": "assets/icon.png",
       "category": "Office"
     },
@@ -73,6 +90,7 @@
   },
   "devDependencies": {
     "electron": "^31.7.7",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.13.3",
+    "sharp": "^0.34.5"
   }
 }

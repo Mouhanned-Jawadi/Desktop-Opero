@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 52" width="232" height="52" role="img" aria-label="Teamyy logo">
+  <defs>
+    <linearGradient id="brand-grad-d" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="bar-shine-d" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Icon mark (52 × 52) ── -->
+  <!-- Background square -->
+  <rect x="0" y="0" width="52" height="52" rx="13" fill="url(#brand-grad-d)"/>
+  <!-- Subtle inner shine overlay -->
+  <rect x="0" y="0" width="52" height="26" rx="13" fill="url(#bar-shine-d)"/>
+  <!-- Header strip -->
+  <rect x="5.5" y="5.5" width="41" height="8" rx="3" fill="#ffffff" fill-opacity="0.28"/>
+  <!-- Left column (medium) -->
+  <rect x="5.5" y="29" width="11.5" height="17.5" rx="2.5" fill="#ffffff" fill-opacity="0.80"/>
+  <!-- Middle column (tallest) -->
+  <rect x="20.25" y="21" width="11.5" height="25.5" rx="2.5" fill="#ffffff" fill-opacity="1.00"/>
+  <!-- Right column (short) -->
+  <rect x="35" y="35.5" width="11.5" height="11" rx="2.5" fill="#ffffff" fill-opacity="0.62"/>
+
+  <!-- ── Wordmark (white for dark backgrounds) ── -->
+  <text
+    x="64"
+    y="34"
+    font-family="'Inter', 'SF Pro Display', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="28"
+    font-weight="800"
+    letter-spacing="-0.8"
+    fill="#f8fafc"
+  >Teamyy</text>
+</svg>

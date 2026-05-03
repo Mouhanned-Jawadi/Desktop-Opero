@@ -1,0 +1,15 @@
+{
+  "short_name": "Teamyy",
+  "name": "Teamyy",
+  "icons": [
+    {
+      "src": "teamyy-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#ffffff"
+}

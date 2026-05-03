@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teamyy — Generate logo PNGs</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f1f5f9; color: #1e293b; padding: 40px; }
+    h2 { font-size: 1.2rem; margin-bottom: 8px; color: #6366f1; }
+    .grid { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; }
+    .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+    .card.dark-bg { background: #0f172a; }
+    canvas { display: block; margin-bottom: 12px; border-radius: 6px; }
+    button { background: linear-gradient(135deg,#6366f1,#8b5cf6); color: #fff; border: none; border-radius: 8px; padding: 8px 20px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+    button:hover { opacity: 0.9; }
+    p.note { color: #64748b; font-size: 0.85rem; margin-top: 0; }
+    #status { margin-top: 20px; font-size: 0.9rem; color: #059669; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:4px;">Teamyy Logo Generator</h1>
+  <p class="note">Click <strong>Generate &amp; Download all PNGs</strong> to export all 4 logo variants as PNG files.</p>
+
+  <div class="grid" id="previews"></div>
+
+  <button onclick="generateAll()">⬇ Generate &amp; Download all PNGs</button>
+  <p id="status"></p>
+
+  <script>
+    // ── SVG source strings ──────────────────────────────────────────────────
+    const svgLight = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 52" width="232" height="52">
+  <defs>
+    <linearGradient id="gl" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="sl" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="52" height="52" rx="13" fill="url(#gl)"/>
+  <rect x="0" y="0" width="52" height="26" rx="13" fill="url(#sl)"/>
+  <rect x="5.5" y="5.5" width="41" height="8" rx="3" fill="#ffffff" fill-opacity="0.28"/>
+  <rect x="5.5" y="29" width="11.5" height="17.5" rx="2.5" fill="#ffffff" fill-opacity="0.80"/>
+  <rect x="20.25" y="21" width="11.5" height="25.5" rx="2.5" fill="#ffffff" fill-opacity="1.00"/>
+  <rect x="35" y="35.5" width="11.5" height="11" rx="2.5" fill="#ffffff" fill-opacity="0.62"/>
+  <text x="64" y="34" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" letter-spacing="-0.8" fill="#1e293b">Teamyy</text>
+</svg>`;
+
+    const svgDark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 52" width="232" height="52">
+  <defs>
+    <linearGradient id="gd" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="sd" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="52" height="52" rx="13" fill="url(#gd)"/>
+  <rect x="0" y="0" width="52" height="26" rx="13" fill="url(#sd)"/>
+  <rect x="5.5" y="5.5" width="41" height="8" rx="3" fill="#ffffff" fill-opacity="0.28"/>
+  <rect x="5.5" y="29" width="11.5" height="17.5" rx="2.5" fill="#ffffff" fill-opacity="0.80"/>
+  <rect x="20.25" y="21" width="11.5" height="25.5" rx="2.5" fill="#ffffff" fill-opacity="1.00"/>
+  <rect x="35" y="35.5" width="11.5" height="11" rx="2.5" fill="#ffffff" fill-opacity="0.62"/>
+  <text x="64" y="34" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" letter-spacing="-0.8" fill="#f8fafc">Teamyy</text>
+</svg>`;
+
+    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" width="52" height="52">
+  <defs>
+    <linearGradient id="gi" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="si" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="52" height="52" rx="13" fill="url(#gi)"/>
+  <rect x="0" y="0" width="52" height="26" rx="13" fill="url(#si)"/>
+  <rect x="5.5" y="5.5" width="41" height="8" rx="3" fill="#ffffff" fill-opacity="0.28"/>
+  <rect x="5.5" y="29" width="11.5" height="17.5" rx="2.5" fill="#ffffff" fill-opacity="0.80"/>
+  <rect x="20.25" y="21" width="11.5" height="25.5" rx="2.5" fill="#ffffff" fill-opacity="1.00"/>
+  <rect x="35" y="35.5" width="11.5" height="11" rx="2.5" fill="#ffffff" fill-opacity="0.62"/>
+</svg>`;
+
+    // ── Exports config ──────────────────────────────────────────────────────
+    const exports = [
+      { name: 'teamyy-logo-light', svg: svgLight, w: 464, h: 104,  bg: '#ffffff', darkCard: false },
+      { name: 'teamyy-logo-dark',  svg: svgDark,  w: 464, h: 104,  bg: '#0f172a', darkCard: true  },
+      { name: 'teamyy-icon-light', svg: svgIcon,  w: 256,  h: 256,  bg: '#ffffff', darkCard: false },
+      { name: 'teamyy-icon-dark',  svg: svgIcon,  w: 256,  h: 256,  bg: '#0f172a', darkCard: true  },
+    ];
+
+    // ── Render previews ─────────────────────────────────────────────────────
+    const container = document.getElementById('previews');
+    exports.forEach(({ name, svg, w, h, bg, darkCard }) => {
+      const card = document.createElement('div');
+      card.className = `card${darkCard ? ' dark-bg' : ''}`;
+
+      const label = document.createElement('p');
+      label.style.cssText = `font-size:0.78rem;font-weight:600;color:${darkCard ? '#94a3b8' : '#64748b'};margin:0 0 10px`;
+      label.textContent = name + '.png  (2×)';
+      card.appendChild(label);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.style.cssText = `width:${w/2}px;height:${h/2}px;background:${bg}`;
+      card.appendChild(canvas);
+      container.appendChild(card);
+
+      // Draw onto canvas
+      renderToCanvas(canvas, svg, w, h);
+    });
+
+    function renderToCanvas(canvas, svgStr, w, h) {
+      const ctx = canvas.getContext('2d');
+      const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, w, h);
+        // scale to fill canvas (SVG viewBox coords × 2 for 2× export)
+        const svgW = svgStr.includes('viewBox="0 0 232') ? 232 : 52;
+        const svgH = svgStr.includes('viewBox="0 0 232') ? 52 : 52;
+        const scaleX = w / svgW;
+        const scaleY = h / svgH;
+        ctx.drawImage(img, 0, 0, svgW * scaleX, svgH * scaleY);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+
+    // ── Generate & download all PNGs ────────────────────────────────────────
+    async function generateAll() {
+      const status = document.getElementById('status');
+      status.textContent = 'Generating…';
+      const canvases = document.querySelectorAll('canvas');
+
+      for (let i = 0; i < exports.length; i++) {
+        const { name, bg } = exports[i];
+        const canvas = canvases[i];
+
+        // Fill background then composite
+        const offscreen = document.createElement('canvas');
+        offscreen.width  = canvas.width;
+        offscreen.height = canvas.height;
+        const ctx = offscreen.getContext('2d');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, offscreen.width, offscreen.height);
+        ctx.drawImage(canvas, 0, 0);
+
+        await new Promise(resolve => {
+          offscreen.toBlob(blob => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = name + '.png';
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+            resolve();
+          }, 'image/png');
+        });
+
+        // Small delay between downloads so browser doesn't block
+        await new Promise(r => setTimeout(r, 300));
+      }
+
+      status.textContent = '✅ All 4 PNGs downloaded! Move them to Frontend-Opero/public/';
+    }
+  </script>
+</body>
+</html>
